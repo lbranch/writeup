@@ -1,0 +1,92 @@
+---
+title: "Exercise Prediction"
+output:
+  html_document:
+    keep_md: yes
+---
+ 
+##Introduction
+The goal of this project is to predict the manner in which research participants exercised using data from an  accelerometer device. Variables from the data sets were selected for analysis to predict the type of exercise. This report provides the following:
+
+1. Describes how the predictive model was built.
+2. How the model was cross validated.
+3. Expected out of sample error claculation.
+4. A prediction for 20 different test cases.  
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.
+ 
+
+##Data Processing
+
+
+```{r}
+
+trainsrc <- read.csv("pml-training.csv")
+testsrc <- read.csv("pml-testing.csv")
+dim(trainsrc)
+
+```
+
+
+
+##Analysis
+
+From the training data we identified the data set has 160 columns and 19622 rows.  It is also noted that some of the collumns have no values.  We will build a model based on columns with valid values and non identifying row columns.
+
+```{r}
+## Remove Identify variables*
+trainSet <- subset (trainsrc , select = -X: -num_window)
+testSet <- subset (testsrc , select = -X: -num_window)
+
+
+## Remove NA columns*
+trainSet <- trainSet[, sapply(trainSet, function(x) !any(is.na(x)))]
+trainSet <- trainSet[, sapply(trainSet, function(x) !any(x==""))]
+testSet <- testSet[, sapply(testSet, function(x) !any(is.na(x)))]
+
+```
+
+
+```{r, echo=FALSE, warnings=FALSE}
+library (caret)
+library (randomForest)
+
+```
+
+*** Verify prediction model ***
+
+In order to cross validate the model we will build two data sets and  cross-validation.
+The model is built use the random forest model. 
+
+```{r}
+set.seed (77452)
+trainIdx = createDataPartition(trainSet$classe, p = .75)[[1]]
+training = trainSet[trainIdx,]
+testing = trainSet[-trainIdx,]
+
+## Build the prediction model
+
+predictors <- training [, -53]
+decision <- training [, 53]
+rfMD <- randomForest (predictors, decision)
+
+```
+Expected Out of Samlple Error Claculation
+From the confusion matrix below the model is 99% accurate.  The out of sample error is .35% .
+
+```{r}
+predClass <- predict (rfMD, testing)
+confusionMatrix (testing$classe,predClass)
+```
+
+
+##Results 
+The prediction model yielded the following predicted values for the 20 test cases.
+
+```{r, echo=FALSE}
+predtest <- predict (rfMD, testSet) ; predtest
+
+
+```
+
+ 
