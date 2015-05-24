@@ -1,8 +1,6 @@
 ---
 title: "Exercise Prediction"
-output:
-  html_document:
-    keep_md: yes
+
 ---
  
 ##Introduction
@@ -34,7 +32,7 @@ dim(trainsrc)
 From the training data we identified the data set has 160 columns and 19622 rows.  It is also noted that some of the collumns have no values.  We will build a model based on columns with valid values and non identifying row columns.
 
 ```{r}
-## Remove Identify variables*
+## Remove row identifying variables 
 trainSet <- subset (trainsrc , select = -X: -num_window)
 testSet <- subset (testsrc , select = -X: -num_window)
 
@@ -53,10 +51,10 @@ library (randomForest)
 
 ```
 
-*** Verify prediction model ***
-
-In order to cross validate the model we will build two data sets and  cross-validation.
-The model is built use the random forest model. 
+### Model Cross Validation
+ 
+In order to cross validate the model we will build two data sets. The model will use the random forest model. 
+The random forest model was chosen for its high accuracy and minimum need for data transformations.
 
 ```{r}
 set.seed (77452)
@@ -71,7 +69,7 @@ decision <- training [, 53]
 rfMD <- randomForest (predictors, decision)
 
 ```
-Expected Out of Samlple Error Claculation
+### Expected Out of Samlple Error Claculation
 From the confusion matrix below the model is 99% accurate.  The out of sample error is .35% .
 
 ```{r}
