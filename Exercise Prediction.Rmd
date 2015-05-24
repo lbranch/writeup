@@ -83,11 +83,11 @@ confusionMatrix (testing$classe,predClass)
 ##Results 
 The prediction model yielded the following predicted values for the 20 test cases.
 
-```{r, echo=FALSE}
-predtest <- predict (rfMD, testSet) 
-predtest
+```{r}
+predtest <- predict (rfMD, testSet) ; predtest
 
 
 ```
-
+## Conclusions
+The random tree model performed accurately.  The model expected accuracy is 99%.  The out of sample error  was calculated to be .35%.                                                                                                    
  
